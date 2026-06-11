@@ -1,0 +1,35 @@
+###To convert into PDF later on !!
+
+COMP 472 Mini Project 2 - Short Reflection
+
+Team Members:
+
+Noemie Corneillier 40284815
+Kaoutar Machouat   40268038
+Yijia Xu           40324577
+
+Contribution of Each Team Members:
+
+Noemie Corneillier: 
+
+Kaoutar Machouat:
+
+Yijia Xu:
+
+
+Difficulties faced and how we overcame them:
+- 
+- 
+- 
+...
+
+
+Actual Development Time Per Task:
+Understanding TF-IDF:
+Environment setup:
+Dataset loading:
+Model training:
+Model evaluation:
+Visualization:
+Testing and debugging:
+Having fun: 
