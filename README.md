@@ -10,26 +10,27 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 - Generates a chart showing the number of spam and non-spam messages using matplotlib
 - Maintains the prediction recursively by continuously accepting user input until the user quit the program
 ## Project Structure
-email_classifier/
+```email_classifier/
 ├── data/
-│   └── TBD.csv                     # SMS/Email dataset (label, message)
+│   └── TBD.csv
 ├── src/
 │   ├── __init__.py
-│   ├── main.py                     # CLI entry point
-│   ├── classifier.py               # ML classifier logic
-│   ├── feature_extraction.py       # TfidfVectorizer
-│   ├── evaluation.py               # Accuracy, confusion matrix
-│   └── visualization.py            # Matplotlib charts
+│   ├── main.py
+│   ├── classifier.py
+│   ├── conversion.py
+│   ├── evaluation.py
+│   └── visualization.py
 ├── gui/
 │   ├── __init__.py
-│   └── gui_app.py                  # Tkinter GUI (optional)
+│   └── gui_app.py
 ├── tests/
 │   ├── __init__.py
 │   ├── test_classifier.py
-│   └── test_feature_extraction.py
+│   └── test_conversion.py
 ├── requirements.txt
 ├── README.md
 └── .gitignore
+```
 
 ## Setup in VS Code
 
