@@ -33,12 +33,21 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 ```
 
 ## Setup in VS Code
-
+Open the project folder in VS Code, then run these commands in the terminal.
 ### Windows 
-
-
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python src/main.py
+```
 ### macOS/ Linux
-
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python src/main.py 
+```
 ## Architecture
 
 ## How it works 
