@@ -22,10 +22,10 @@ def main() -> None:
     try:
         classifier = EmailClassifier(knowledge_base_path="data/spam.csv")
     except FileNotFoundError as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return
     except ValueError as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return
 
     # Display dataset information
