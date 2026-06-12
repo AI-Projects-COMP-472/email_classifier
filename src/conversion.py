@@ -45,9 +45,6 @@ class SpamDataset:
                 f"Could not find {file_path}. Make sure spam.csv is in the data/ folder."
             )
 
-        # Read raw data
-        # data = pd.read_csv(file_path)
-
         # Read raw data with error handling for different encodings
         try:
             # Try UTF-8 first (most common)
