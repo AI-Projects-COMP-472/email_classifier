@@ -18,6 +18,7 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 │   ├── main.py
 │   ├── classifier.py
 │   ├── conversion.py
+│   ├── training.py
 │   ├── evaluation.py
 │   └── visualization.py
 ├── gui/
@@ -26,7 +27,10 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 ├── tests/
 │   ├── __init__.py
 │   ├── test_classifier.py
-│   └── test_conversion.py
+│   ├── test_conversion.py
+│   ├── test_training.py
+│   ├── test_evaluation.py
+│   └── test_visualization.py
 ├── requirements.txt
 ├── README.md
 └── .gitignore
