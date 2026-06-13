@@ -67,10 +67,6 @@ class EmailClassifier:
         info += f"Average message length: {avg_len:.0f} characters"
         return info
 
-    def get_dataset_preview(self, n: int = 5) -> pd.DataFrame:
-        """Return a preview of the first rows of the dataset."""
-        return self.dataset[["label", "message"]].head(n).copy()
-
     def train(self, model_type: str = "logistic", test_size: float = 0.2, random_state: int = 42) -> None:
         """Train the classifier using the loaded dataset."""
         if self.dataset.empty:

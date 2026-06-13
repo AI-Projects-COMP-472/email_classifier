@@ -10,14 +10,7 @@ This module handles the command-line interface and user interaction.
 """
 
 from src.classifier import EmailClassifier
-
-
-def render_preview(classifier: EmailClassifier, rows: int = 5) -> None:
-    preview = classifier.get_dataset_preview(rows)
-    print("\n--- Dataset Preview ---")
-    for index, row in preview.iterrows():
-        print(f"[{index + 1}] {row['label'].upper()}: {row['message']}")
-    print(f"{'---' * 8}\n")
+from src.visualization import plot_label_distribution
 
 
 def print_evaluation(evaluation: dict) -> None:
@@ -69,7 +62,6 @@ def main() -> None:
 
     print(f"\n--- Dataset Information ---")
     print(classifier.get_dataset_info())
-    render_preview(classifier)
 
     try:
         classifier.train(model_type="logistic")
@@ -79,6 +71,9 @@ def main() -> None:
 
     evaluation = classifier.evaluate()
     print_evaluation(evaluation)
+
+    # Generate visualization
+    plot_label_distribution(classifier.dataset)
 
     run_prediction_loop(classifier)
 
