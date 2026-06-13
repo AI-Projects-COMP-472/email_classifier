@@ -12,7 +12,6 @@ This module handles the command-line interface and user interaction.
 from src.classifier import EmailClassifier
 from src.visualization import plot_label_distribution
 
-
 def print_evaluation(evaluation: dict) -> None:
     classes = evaluation["classes"]
     confusion = evaluation["confusion_matrix"]
@@ -52,7 +51,7 @@ def main() -> None:
     print("=" * 50)
 
     try:
-        classifier = EmailClassifier(knowledge_base_path="data/spam.csv")
+        classifier = EmailClassifier(dataset_path="data/spam.csv")
     except FileNotFoundError as e:
         print(f"Error: {e}")
         return
