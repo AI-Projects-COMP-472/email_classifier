@@ -4,6 +4,7 @@ Used for:
 - Reading the CSV file into a DataFrame
 - Verifying required columns exist
 - Cleaning rows -> drop missing or blank values
+- Converting text to TF-IDF numerical features
 """
 
 from __future__ import annotations
