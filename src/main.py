@@ -9,7 +9,7 @@ Main entry point for the email classifier.
 This module handles the command-line interface and user interaction.
 """
 
-from classifier import EmailClassifier
+from src.classifier import EmailClassifier
 
 
 def render_preview(classifier: EmailClassifier, rows: int = 5) -> None:
