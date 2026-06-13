@@ -1,7 +1,7 @@
 # COMP 472 Mini Project 2: Email classifier
 This project is an AI-powered email filtering system for COMP 472. The program will convert email text into numerical features, train a machine learning model with a a CSV SMS Spam Collection dataset, predict whether new emails are spam or not, display confidence levels and evaluate the model performance.
 ## Features
-- Loads a data/TBD.csv file with label,message columns
+- Loads a data/spam.csv file with label,message columns
 - Uses pandas for CSV loading
 - Uses TfidfVectorizer from scikit-learn to convert text into numerical features
 - Trains a machine learning classifier using Logistic Regression or Naive Bayes from scikit-learn
@@ -12,7 +12,7 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 ## Project Structure
 ```email_classifier/
 ├── data/
-│   └── TBD.csv
+│   └── spam.csv
 ├── src/
 │   ├── __init__.py
 │   ├── main.py
@@ -22,7 +22,7 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 │   └── visualization.py
 ├── gui/
 │   ├── __init__.py
-│   └── gui_app.py
+│   └── app.py
 ├── tests/
 │   ├── __init__.py
 │   ├── test_classifier.py
@@ -49,15 +49,23 @@ pip install -r requirements.txt
 python src/main.py 
 ```
 ## Architecture
+#To-Do Later
 
 ## How it works 
+#To-Do Later
 
 ## Optional GUI
+#To-Do Later
 
 ## Example Run
+#To-Do Later
 
 ## Test Input
+#To-Do Later
 
 ## Running the basic test
+#To-Do Later
 
+## Screenshots
+#To-Do Later
 
