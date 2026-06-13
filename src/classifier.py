@@ -13,13 +13,12 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.naive_bayes import MultinomialNB
  
-from src.conversion import SpamDataset
+from src.conversion import SpamDataset, TextVectorizer
 
 
 class EmailClassifier:
@@ -44,7 +43,7 @@ class EmailClassifier:
         self.dataset["label"] = (
             self.dataset["label"].astype(str).str.strip().str.lower()
         )
-        self.vectorizer = TfidfVectorizer(stop_words="english")
+        self.vectorizer = TextVectorizer() # Using custom class
         self.model: LogisticRegression | MultinomialNB | None = None
         self.X_train = None
         self.X_test = None
@@ -72,6 +71,7 @@ class EmailClassifier:
         if self.dataset.empty:
             raise ValueError("Cannot train classifier on an empty dataset.")
 
+        # Use the TextVectorizer to fit and transform the data
         X = self.vectorizer.fit_transform(self.dataset["message"].astype(str))
         y = self.dataset["label"].astype(str)
 

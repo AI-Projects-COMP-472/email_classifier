@@ -4,6 +4,7 @@ Used for:
 - Reading the CSV file into a DataFrame
 - Verifying required columns exist
 - Cleaning rows -> drop missing or blank values
+- Converting text to TF-IDF numerical features
 """
 
 from __future__ import annotations
@@ -13,7 +14,6 @@ from pathlib import Path
 import pandas as pd
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-
 
 class SpamDataset:
     """Loads and validates the CSV spam dataset."""
@@ -78,3 +78,56 @@ class SpamDataset:
 
         # Return a clean, sequential index
         return data.reset_index(drop=True)
+    
+class TextVectorizer:
+    """Converts text messages to TF-IDF numerical features."""
+
+    def __init__(self, stop_words: str = "english", max_features: int = None):
+        """
+        Initialize the text vectorizer.
+
+        Args:
+            stop_words: Language for stop words removal (e.g., 'english').
+            max_features: Maximum number of features to extract. None for unlimited.
+        """
+        self.vectorizer = TfidfVectorizer(
+            stop_words=stop_words,
+            max_features=max_features
+        )
+
+    def fit(self, messages):
+        """
+        Fit the vectorizer on training messages.
+
+        Args:
+            messages: List or Series of text messages to fit on.
+
+        Returns:
+            self for method chaining.
+        """
+        self.vectorizer.fit(messages)
+        return self
+
+    def transform(self, messages):
+        """
+        Convert messages to TF-IDF features.
+
+        Args:
+            messages: List or Series of text messages to transform.
+
+        Returns:
+            Sparse matrix of TF-IDF features.
+        """
+        return self.vectorizer.transform(messages)
+
+    def fit_transform(self, messages):
+        """
+        Fit the vectorizer and transform messages in one step.
+
+        Args:
+            messages: List or Series of text messages to fit and transform.
+
+        Returns:
+            Sparse matrix of TF-IDF features.
+        """
+        return self.vectorizer.fit_transform(messages)
