@@ -124,13 +124,19 @@ class EmailClassifierApp:
         self.evaluation_label.pack(padx=20, pady=(0, 15), anchor="w")
 
     def load_model(self):
+
+        thresholds = {
+            "logistic": 0.35,
+            "naive_bayes": 0.20,
+        }
+
         try:
             self.status_label.config(text="Training model...")
             self.root.update_idletasks()
 
             self.classifier = EmailClassifier(
                 dataset_path=DATASET_PATH,
-                spam_threshold=0.35,
+                spam_threshold=thresholds[self.model_type.get()],
             )
             self.classifier.train(model_type=self.model_type.get())
 
