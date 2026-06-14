@@ -1,5 +1,6 @@
 
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 from pathlib import Path
 
@@ -18,6 +19,7 @@ class EmailClassifierApp:
 
         self.classifier = None
 
+        self.model_type = tk.StringVar(value="logistic")
         self.build_interface()
         self.load_model()
 
@@ -42,6 +44,27 @@ class EmailClassifierApp:
             font=("Arial", 11),
         )
         input_label.pack(anchor="w", padx=20, pady=(15, 5))
+
+        model_frame = tk.Frame(self.root)
+        model_frame.pack(pady=(10, 0))
+
+        model_label = tk.Label(
+            model_frame,
+            text="Model:",
+            font=("Arial", 10),
+        )
+        model_label.pack(side="left", padx=(0, 8))
+
+        self.model_selector = ttk.Combobox(
+            model_frame,
+            textvariable=self.model_type,
+            values=["logistic", "naive_bayes"],
+            state="readonly",
+            width=15,
+        )
+        self.model_selector.pack(side="left")
+
+        self.model_selector.bind("<<ComboboxSelected>>", self.change_model)
 
         self.message_input = tk.Text(
             self.root,
@@ -94,13 +117,18 @@ class EmailClassifierApp:
 
     def load_model(self):
         try:
+            self.status_label.config(text="Training model...")
+            self.root.update_idletasks()
+
             self.classifier = EmailClassifier(
                 dataset_path=DATASET_PATH,
                 spam_threshold=0.35,
             )
-            self.classifier.train(model_type="logistic")
+            self.classifier.train(model_type=self.model_type.get())
 
-            self.status_label.config(text="Model ready")
+            self.status_label.config(
+                text=f"Model ready: {self.model_type.get()}"
+            )
             self.info_label.config(text=self.classifier.get_dataset_info())
 
         except (FileNotFoundError, ValueError) as error:
@@ -146,6 +174,14 @@ class EmailClassifierApp:
             fg="black",
         )
         self.confidence_label.config(text="")
+
+    def change_model(self, event=None):
+        self.result_label.config(
+            text="Prediction will appear here.",
+            fg="black",
+        )
+        self.confidence_label.config(text="")
+        self.load_model()
 
 
 def main():
