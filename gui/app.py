@@ -51,13 +51,24 @@ class EmailClassifierApp:
         )
         self.message_input.pack(padx=20)
 
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(pady=15)
+
         classify_button = tk.Button(
-            self.root,
+            button_frame,
             text="Classify",
             command=self.classify_message,
             width=15,
         )
-        classify_button.pack(pady=15)
+        classify_button.pack(side="left", padx=5)
+
+        clear_button = tk.Button(
+            button_frame,
+            text="Clear",
+            command=self.clear_message,
+            width=15,
+        )
+        clear_button.pack(side="left", padx=5)
 
         self.result_label = tk.Label(
             self.root,
@@ -127,6 +138,14 @@ class EmailClassifierApp:
 
         except ValueError as error:
             messagebox.showerror("Error", str(error))
+
+    def clear_message(self):
+        self.message_input.delete("1.0", tk.END)
+        self.result_label.config(
+            text="Prediction will appear here.",
+            fg="black",
+        )
+        self.confidence_label.config(text="")
 
 
 def main():
