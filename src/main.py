@@ -12,6 +12,41 @@ This module handles the command-line interface and user interaction.
 from src.classifier import EmailClassifier
 from src.visualization import plot_label_distribution
 
+MODEL_THRESHOLDS = {
+    "logistic": 0.35,
+    "naive_bayes": 0.20,
+}
+
+
+def choose_model() -> str:
+    """Prompt the user to choose the model used by the CLI."""
+
+    choices = {
+        "1": "logistic",
+        "logistic": "logistic",
+        "lr": "logistic",
+        "2": "naive_bayes",
+        "naive_bayes": "naive_bayes",
+        "naive bayes": "naive_bayes",
+        "nb": "naive_bayes",
+    }
+
+    print("\nChoose a model:")
+    print("  1. Logistic Regression")
+    print("  2. Naive Bayes")
+
+    while True:
+        user_choice = input("Model [1]: ").strip().lower()
+
+        if not user_choice:
+            return "logistic"
+
+        if user_choice in choices:
+            return choices[user_choice]
+
+        print("Invalid choice. Enter 1 for logistic or 2 for naive_bayes.")
+
+
 def print_evaluation(evaluation: dict) -> None:
     classes = evaluation["classes"]
     confusion = evaluation["confusion_matrix"]
@@ -50,10 +85,13 @@ def main() -> None:
     print("  Email Classifier - COMP 472")
     print("=" * 50)
 
+    model_type = choose_model()
+    spam_threshold = MODEL_THRESHOLDS[model_type]
+
     try:
         classifier = EmailClassifier(
             dataset_path="data/spam.csv",
-            spam_threshold=0.35,
+            spam_threshold=spam_threshold,
         )
     except FileNotFoundError as e:
         print(f"Error: {e}")
@@ -64,10 +102,11 @@ def main() -> None:
 
     print(f"\n--- Dataset Information ---")
     print(classifier.get_dataset_info())
+    print(f"Model: {model_type}")
+    print(f"Spam threshold: {spam_threshold:.2f}")
 
     try:
-        # classifier.train(model_type="naive_bayes")
-        classifier.train(model_type="logistic")
+        classifier.train(model_type=model_type)
 
     except ValueError as error:
         print(f"Error while training: {error}")

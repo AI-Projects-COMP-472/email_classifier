@@ -121,6 +121,9 @@ class EmailClassifier:
         spam_index = classes.index("spam")
         spam_probability = float(probabilities[spam_index])
 
+        # Debug
+        # print(f"Spam probability: {spam_probability:.4f}")
+
         if spam_probability >= self.spam_threshold:
             predicted_label = "spam"
             confidence = spam_probability

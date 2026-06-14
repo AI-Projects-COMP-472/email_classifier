@@ -43,14 +43,14 @@ Open the project folder in VS Code, then run these commands in the terminal.
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-python src/main.py
+python -m src.main
 ```
 ### macOS/ Linux
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python src/main.py 
+python -m src.main
 ```
 ## Architecture
 #To-Do Later
@@ -59,7 +59,21 @@ python src/main.py
 #To-Do Later
 
 ## Optional GUI
-#To-Do Later
+#To-Edit Later
+### Windows 
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python -m gui.app
+```
+### macOS/ Linux
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m gui.app
+```
 
 ## Example Run
 #To-Do Later
