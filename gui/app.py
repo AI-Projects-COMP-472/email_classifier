@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from pathlib import Path
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 from src.classifier import EmailClassifier
 
@@ -15,7 +17,7 @@ class EmailClassifierApp:
     def __init__(self, root):
         self.root = root
         self.root.title("COMP 472 - Mini Project 2")
-        self.root.geometry("600x700")
+        self.root.geometry("600x800")
 
         self.classifier = None
 
@@ -123,6 +125,9 @@ class EmailClassifierApp:
         )
         self.evaluation_label.pack(padx=20, pady=(0, 15), anchor="w")
 
+        self.chart_frame = tk.Frame(self.root)
+        self.chart_frame.pack(padx=20, pady=10, fill="both")
+
     def load_model(self):
 
         thresholds = {
@@ -148,6 +153,8 @@ class EmailClassifierApp:
             )
             self.info_label.config(text=self.classifier.get_dataset_info())
             self.evaluation_label.config(text=evaluation_text)
+
+            self.display_label_distribution_chart()
 
         except (FileNotFoundError, ValueError) as error:
             self.status_label.config(text="Model failed to load")
@@ -223,6 +230,44 @@ class EmailClassifierApp:
             )
 
         return "\n".join(lines)
+    
+    def display_label_distribution_chart(self):
+        if self.classifier is None:
+            return
+
+        label_counts = (
+            self.classifier.dataset["label"]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+            .value_counts()
+        )
+
+        figure = Figure(figsize=(3.5, 2.5), dpi=100)
+        axis = figure.add_subplot(111)
+
+        label_counts.plot(
+            kind="bar",
+            ax=axis,
+            color=["#4C78A8", "#F58518"],
+        )
+
+        axis.set_title("Message Label Distribution")
+        axis.set_xlabel("Label")
+        axis.set_ylabel("Messages")
+        axis.tick_params(axis="x", rotation=0)
+
+        for index, count in enumerate(label_counts):
+            axis.text(index, count, str(count), ha="center", va="bottom")
+
+        figure.tight_layout()
+
+        for widget in self.chart_frame.winfo_children():
+            widget.destroy()
+
+        canvas = FigureCanvasTkAgg(figure, master=self.chart_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
 
 
 def main():
