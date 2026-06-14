@@ -93,3 +93,22 @@ def test_evaluate_model_returns_classification_report_text():
     assert isinstance(report, str)
     assert "ham" in report
     assert "spam" in report
+
+
+def test_evaluate_model_uses_spam_threshold():
+    """Test that evaluation applies the custom spam threshold."""
+
+    model, X_test, y_test = make_trained_model_and_test_data()
+
+    evaluation = evaluate_model(model, X_test, y_test, spam_threshold=0.0)
+
+    class_count = len(evaluation["classes"])
+    spam_index = evaluation["classes"].index("spam")
+
+    for row in evaluation["confusion_matrix"]:
+        for column_index, value in enumerate(row):
+            if column_index == spam_index:
+                continue
+            assert value == 0
+
+    assert class_count == 2

@@ -26,12 +26,18 @@ class EmailClassifier:
     This class separates the classifier logic from the command-line interface.
     """
 
-    def __init__(self, dataset_path: str = "data/spam.csv") -> None:
+    def __init__(
+            self,
+            dataset_path: str = "data/spam.csv",
+            spam_threshold: float = 0.40
+    ) -> None:
         """
         Initialize the email classifier.
 
         Args:
             dataset_path: Path to the CSV dataset file.
+            spam_threshold: Minimum spam probability needed to classify a
+                message as spam. Lower values catch spam more aggressively.
 
         Raises:
             FileNotFoundError: If the dataset file does not exist.
@@ -43,6 +49,10 @@ class EmailClassifier:
             self.dataset["label"].astype(str).str.strip().str.lower()
         )
 
+        if not 0.0 <= spam_threshold <= 1.0:
+            raise ValueError("Spam threshold must be between 0.0 and 1.0.")
+
+        self.spam_threshold = spam_threshold
         self.vectorizer = TextVectorizer() # Using custom class
         self.model: LogisticRegression | MultinomialNB | None = None
         
@@ -67,7 +77,8 @@ class EmailClassifier:
 
     def train(
             self, 
-            model_type: str = "logistic", 
+            model_type: str = "logistic",
+            # model_type: str = "naive_bayes", 
             test_size: float = 0.2, 
             random_state: int = 42
     ) -> None:
@@ -106,8 +117,16 @@ class EmailClassifier:
         features = self.vectorizer.transform([text])
         probabilities = self.model.predict_proba(features)[0]
         
-        predicted_label = self.model.classes_[probabilities.argmax()]
-        confidence = float(probabilities.max())
+        classes = list(self.model.classes_)
+        spam_index = classes.index("spam")
+        spam_probability = float(probabilities[spam_index])
+
+        if spam_probability >= self.spam_threshold:
+            predicted_label = "spam"
+            confidence = spam_probability
+        else:
+            predicted_label = "ham"
+            confidence = 1.0 - spam_probability
         
         return predicted_label, confidence
 
@@ -117,4 +136,9 @@ class EmailClassifier:
         if not self.trained or self.model is None:
             raise ValueError("The classifier must be trained before evaluation.")
 
-        return evaluate_model(self.model, self.X_test, self.y_test)
+        return evaluate_model(
+            self.model,
+            self.X_test,
+            self.y_test,
+            spam_threshold=self.spam_threshold,
+        )
