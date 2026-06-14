@@ -14,8 +14,8 @@ DATASET_PATH = PROJECT_ROOT / "data" / "spam.csv"
 class EmailClassifierApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Email Spam Classifier")
-        self.root.geometry("600x450")
+        self.root.title("COMP 472 - Mini Project 2")
+        self.root.geometry("600x700")
 
         self.classifier = None
 
@@ -118,7 +118,7 @@ class EmailClassifierApp:
         self.evaluation_label = tk.Label(
             self.root,
             text="",
-            font=("Arial", 9),
+            font=("Courier New", 10),
             justify="left",
         )
         self.evaluation_label.pack(padx=20, pady=(0, 15), anchor="w")
@@ -196,18 +196,25 @@ class EmailClassifierApp:
         self.load_model()
     
     def format_evaluation_summary(self, evaluation):
-        classes = evaluation["classes"]
+        classes = [str(label) for label in evaluation["classes"]]
         confusion = evaluation["confusion_matrix"]
+
+        header = f"{'Actual':<10}{'Predicted ham':>15}{'Predicted spam':>17}"
+        separator = "-" * len(header)
 
         lines = [
             "--- Evaluation ---",
             f"Accuracy: {evaluation['accuracy']:.2%}",
+            "",
             "Confusion matrix:",
-            f"Classes: {classes}",
+            header,
+            separator,
         ]
 
         for label, row in zip(classes, confusion):
-            lines.append(f"{label}: {row}")
+            lines.append(
+                f"{label:<10}{row[0]:>15}{row[1]:>17}"
+            )
 
         return "\n".join(lines)
 
