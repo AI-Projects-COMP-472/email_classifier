@@ -51,7 +51,10 @@ def main() -> None:
     print("=" * 50)
 
     try:
-        classifier = EmailClassifier(dataset_path="data/spam.csv")
+        classifier = EmailClassifier(
+            dataset_path="data/spam.csv",
+            spam_threshold=0.35,
+        )
     except FileNotFoundError as e:
         print(f"Error: {e}")
         return
@@ -63,7 +66,9 @@ def main() -> None:
     print(classifier.get_dataset_info())
 
     try:
+        # classifier.train(model_type="naive_bayes")
         classifier.train(model_type="logistic")
+
     except ValueError as error:
         print(f"Error while training: {error}")
         return
