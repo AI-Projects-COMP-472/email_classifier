@@ -115,6 +115,14 @@ class EmailClassifierApp:
         )
         self.info_label.pack(padx=20, pady=20, anchor="w")
 
+        self.evaluation_label = tk.Label(
+            self.root,
+            text="",
+            font=("Arial", 9),
+            justify="left",
+        )
+        self.evaluation_label.pack(padx=20, pady=(0, 15), anchor="w")
+
     def load_model(self):
         try:
             self.status_label.config(text="Training model...")
@@ -126,10 +134,14 @@ class EmailClassifierApp:
             )
             self.classifier.train(model_type=self.model_type.get())
 
+            evaluation = self.classifier.evaluate()
+            evaluation_text = self.format_evaluation_summary(evaluation)
+
             self.status_label.config(
                 text=f"Model ready: {self.model_type.get()}"
             )
             self.info_label.config(text=self.classifier.get_dataset_info())
+            self.evaluation_label.config(text=evaluation_text)
 
         except (FileNotFoundError, ValueError) as error:
             self.status_label.config(text="Model failed to load")
@@ -182,6 +194,22 @@ class EmailClassifierApp:
         )
         self.confidence_label.config(text="")
         self.load_model()
+    
+    def format_evaluation_summary(self, evaluation):
+        classes = evaluation["classes"]
+        confusion = evaluation["confusion_matrix"]
+
+        lines = [
+            "--- Evaluation ---",
+            f"Accuracy: {evaluation['accuracy']:.2%}",
+            "Confusion matrix:",
+            f"Classes: {classes}",
+        ]
+
+        for label, row in zip(classes, confusion):
+            lines.append(f"{label}: {row}")
+
+        return "\n".join(lines)
 
 
 def main():
