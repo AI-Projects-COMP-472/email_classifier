@@ -48,21 +48,28 @@ def choose_model() -> str:
 
 
 def print_evaluation(evaluation: dict) -> None:
+    """Display accuracy, confusion matrix, and classification report for a trained model."""    
     classes = evaluation["classes"]
     confusion = evaluation["confusion_matrix"]
+    
     print("--- Evaluation ---")
     print(f"Accuracy: {evaluation['accuracy']:.2%}")
     print("Confusion matrix:")
     print(f"  Classes: {classes}")
+    
     for label, row in zip(classes, confusion):
         print(f"  {label}: {row}")
+    
     print("\nClassification report:")
     print(evaluation["report"])
     print(f"{'---' * 8}\n")
 
 
 def run_prediction_loop(classifier: EmailClassifier) -> None:
+    """Run an interactive CLI loop that classifies user-entered email messages."""
+
     print("Enter an email message to classify, or type 'quit' to exit.")
+    
     while True:
         user_input = input("Message: ").strip()
         if user_input.lower() in {"quit", "exit", "q"}:
@@ -80,7 +87,7 @@ def run_prediction_loop(classifier: EmailClassifier) -> None:
 
 
 def main() -> None:
-    """Main function to run the email classifier."""
+    """Run the full CLI workflow: model selection, training, evaluation, and prediction."""    
     print("=" * 50)
     print("  Email Classifier - COMP 472")
     print("=" * 50)
