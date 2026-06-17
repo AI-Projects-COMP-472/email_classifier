@@ -1,12 +1,11 @@
-"""
-COMP 472 Mini Project 2
-AI-driven email filtering system for spam emails detection
+"""Command-line interface for the COMP 472 email classifier.
+
+This module provides an interactive workflow for training a spam detection
+model, evaluating its performance, generating a visualization of label
+distribution, and classifying new email messages entered by the user.
 
 Run:
-    python src/main.py
-
-Main entry point for the email classifier.
-This module handles the command-line interface and user interaction.
+    python -m src.main
 """
 
 from src.classifier import EmailClassifier
@@ -19,7 +18,11 @@ MODEL_THRESHOLDS = {
 
 
 def choose_model() -> str:
-    """Prompt the user to choose the model used by the CLI."""
+    """Prompt the user to select the classifier model.
+
+    Returns:
+        A model type string of either 'logistic' or 'naive_bayes'.
+    """
 
     choices = {
         "1": "logistic",
@@ -48,6 +51,12 @@ def choose_model() -> str:
 
 
 def print_evaluation(evaluation: dict) -> None:
+    """Print evaluation metrics for the trained classifier.
+
+    Args:
+        evaluation: A dictionary returned by EmailClassifier.evaluate(),
+            containing accuracy, confusion matrix, labels, and report text.
+    """
     classes = evaluation["classes"]
     confusion = evaluation["confusion_matrix"]
     print("--- Evaluation ---")
@@ -62,6 +71,10 @@ def print_evaluation(evaluation: dict) -> None:
 
 
 def run_prediction_loop(classifier: EmailClassifier) -> None:
+    """Run the interactive prediction loop for user-entered email text.
+
+    The loop continues until the user types 'quit', 'exit', or 'q'.
+    """
     print("Enter an email message to classify, or type 'quit' to exit.")
     while True:
         user_input = input("Message: ").strip()

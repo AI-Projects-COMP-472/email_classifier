@@ -1,16 +1,22 @@
-# COMP 472 Mini Project 2: Email classifier
-This project is an AI-powered email filtering system for COMP 472. The program will convert email text into numerical features, train a machine learning model with a CSV SMS Spam Collection dataset, predict whether new emails are spam or not, display confidence levels and evaluate the model performance.
+# COMP 472 Mini Project 2: Email Classifier
+
+This project implements a command-line email filtering system for COMP 472. It trains a machine learning classifier on a spam dataset, evaluates its performance, and predicts whether new messages are spam or ham.
+
 ## Features
-- Loads a data/spam.csv file with label,message columns
-- Uses pandas for CSV loading
-- Uses TfidfVectorizer from scikit-learn to convert text into numerical features
-- Trains a machine learning classifier using Logistic Regression or Naive Bayes from scikit-learn
-- Evaluates performance of the model by displaying its accuracy and a confusion matrix
-- Displays the predicted label and confidence score
-- Generates a chart showing the number of spam and non-spam messages using matplotlib
-- Maintains the prediction recursively by continuously accepting user input until the user quit the program
+
+- Loads `data/spam.csv` with `label` and `message` columns
+- Uses `pandas` for dataset loading and validation
+- Converts email text to TF-IDF features using `scikit-learn`
+- Supports Logistic Regression and Multinomial Naive Bayes
+- Evaluates model accuracy, confusion matrix, and classification report
+- Predicts spam/ham labels with confidence scores
+- Generates a bar chart showing spam vs non-spam counts with `matplotlib`
+- Accepts continuous user input until the user exits
+
 ## Project Structure
-```email_classifier/
+
+```text
+email_classifier/
 ├── data/
 │   └── spam.csv
 ├── src/
@@ -18,7 +24,6 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 │   ├── main.py
 │   ├── classifier.py
 │   ├── conversion.py
-│   ├── training.py
 │   ├── evaluation.py
 │   └── visualization.py
 ├── gui/
@@ -28,62 +33,86 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 │   ├── __init__.py
 │   ├── test_classifier.py
 │   ├── test_conversion.py
-│   ├── test_training.py
-│   ├── test_evaluation.py
 │   └── test_visualization.py
 ├── requirements.txt
 ├── README.md
-└── .gitignore
+└── short_reflection.txt
 ```
 
-## Setup in VS Code
-Open the project folder in VS Code, then run these commands in the terminal.
-### Windows 
+## Requirements
+
+- Python 3.8 or later
+- `pandas`
+- `scikit-learn`
+- `matplotlib`
+
+Install dependencies:
+
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
 pip install -r requirements.txt
-python -m src.main
 ```
-### macOS/ Linux
+
+## Setup
+
+Create and activate a virtual environment.
+
+### macOS / Linux
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python -m src.main
 ```
-## Architecture
-#To-Do Later
 
-## How it works 
-#To-Do Later
+### Windows
 
-## Optional GUI
-#To-Edit Later
-### Windows 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-python -m gui.app
 ```
-### macOS/ Linux
+
+## Usage
+
+Run the main program from the project root:
+
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python -m gui.app
+python -m src.main
+```
+
+The program will:
+
+1. Prompt for a model choice
+2. Train the selected classifier
+3. Display dataset information and evaluation metrics
+4. Save a spam/ham distribution chart
+5. Allow repeated input for new email classification
+
+## Demo Script
+
+A demo script is available for a quick sample run:
+
+```bash
+python demo.py
+```
+
+This will train the model, print evaluation results, save `spam_distribution_demo.png`, and classify example messages.
+
+## Testing
+
+Run unit tests with:
+
+```bash
+python -m pytest -q
 ```
 
 ## Example Run
-#To-Do Later
 
-## Test Input
-#To-Do Later
+After starting the program, type an email message and press Enter.
+Then enter `quit` to exit.
 
-## Running the basic test
-#To-Do Later
+## Notes
 
-## Screenshots
-#To-Do Later
-
+- `src/main.py` is the main CLI entry point.
+- `src/classifier.py` manages dataset loading, training, prediction, and evaluation.
+- `src/visualization.py` generates the required spam/ham distribution chart.
