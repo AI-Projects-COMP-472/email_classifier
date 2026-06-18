@@ -70,12 +70,16 @@ python -m src.main
 ## How it works
 #To-Do Later
 ### Feature extraction (TF-IDF)
+The email text is converted into numerical values using TF-IDF. This gives more importance to words that are useful for classification while reducing the impact of very common words.
 
 ### Model Training
+The dataset is split into training and testing data. The selected model, either Logistic Regression or Naive Bayes, learns from the training messages and their labels.
 
 ### Model Evaluation
+After training, the model is tested on unseen messages. The program displays the accuracy and a confusion matrix to show how many ham and spam messages were classified correctly or incorrectly.
 
 ### Confidence Score
+For each prediction, the model returns probabilities for ham and spam. The program uses these probabilities to choose the final label and display a confidence score.
 
 ## Optional GUI
 The project also includes a simple Tkinter GUI for demo purposes. It uses the same classes as the command-line version.
