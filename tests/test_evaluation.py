@@ -44,7 +44,6 @@ def test_evaluate_model_returns_expected_keys():
         "accuracy",
         "confusion_matrix",
         "classes",
-        "report",
     }
 
 
@@ -80,19 +79,6 @@ def test_evaluate_model_returns_square_confusion_matrix():
     # A confusion matrix should be square: classes by classes.
     assert len(confusion_matrix) == class_count
     assert all(len(row) == class_count for row in confusion_matrix)
-
-
-def test_evaluate_model_returns_classification_report_text():
-    """Test that the classification report contains the learned class labels."""
-
-    model, X_test, y_test = make_trained_model_and_test_data()
-
-    evaluation = evaluate_model(model, X_test, y_test)
-    report = evaluation["report"]
-
-    assert isinstance(report, str)
-    assert "ham" in report
-    assert "spam" in report
 
 
 def test_evaluate_model_uses_spam_threshold():

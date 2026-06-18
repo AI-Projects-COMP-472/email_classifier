@@ -21,8 +21,8 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
         A dictionary containing accuracy, confusion matrix, classes
     """
 
-    # converts label names into a normal Python list
-    classes = list(model.classes_)
+    # converts label names into a normal Python list of strings
+    classes = [str(label) for label in model.classes_]
     # finds the position of "spam" inside the class list
     spam_index = classes.index("spam")
     # asks the model to predict probabilities for every test message
