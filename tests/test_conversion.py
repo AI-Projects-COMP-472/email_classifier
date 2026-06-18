@@ -1,6 +1,6 @@
 import pytest
 
-from src.conversion import SpamDataset, TextVectorizer
+from src.vectorizer import SpamDataset, TextVectorizer
 
 
 def test_spam_dataset_loads_valid_csv(tmp_path):

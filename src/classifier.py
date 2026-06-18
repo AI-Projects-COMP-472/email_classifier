@@ -15,7 +15,8 @@ from typing import Any
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 
-from src.conversion import SpamDataset, TextVectorizer
+from src.dataset import SpamDataset
+from src.vectorizer import TextVectorizer
 from src.training import create_model, split_training_data, train_model
 from src.evaluation import evaluate_model
 
