@@ -100,6 +100,8 @@ def main() -> None:
     print(f"Spam threshold: {spam_threshold:.2f}")
 
     try:
+        print(f"\nTraining Model {model_type}...")
+
         classifier.train(model_type=model_type)
 
     except ValueError as error:
