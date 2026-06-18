@@ -1,12 +1,10 @@
 """Visualization helpers for the email classifier."""
 
 from __future__ import annotations
-
 from pathlib import Path
 
 import pandas as pd
 from matplotlib import pyplot as plt
-
 
 def plot_label_distribution(
     dataset: pd.DataFrame,
@@ -33,9 +31,12 @@ def plot_label_distribution(
     # Normalize labels before counting so values like "Spam" and " spam " match.
     label_counts = dataset["label"].astype(str).str.strip().str.lower().value_counts()
 
+    # creates a Matplotlib figure and axis. The chart size is 6 inches wide by 4 inches tall
     figure, axis = plt.subplots(figsize=(6, 4))
+    # plots the label counts as a bar chart on that axis. The bars use two colors: blue and orange
     label_counts.plot(kind="bar", ax=axis, color=["#4C78A8", "#F58518"])
 
+    # configuration of the chart text
     axis.set_title("Message Label Distribution")
     axis.set_xlabel("Label")
     axis.set_ylabel("Number of messages")
@@ -45,12 +46,14 @@ def plot_label_distribution(
     for index, count in enumerate(label_counts):
         axis.text(index, count, str(count), ha="center", va="bottom")
 
+    # adjusts spacing so labels and titles fit nicely without being cut off
     figure.tight_layout()
 
+    # If file path provided, the chart is saved to that location.
     if save_path is not None:
         figure.savefig(save_path)
 
     if show_plot:
-        plt.show()
+        plt.show() # set to true by default
     else:
         plt.close(figure)
