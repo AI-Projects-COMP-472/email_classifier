@@ -15,7 +15,8 @@ from typing import Any
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 
-from src.conversion import SpamDataset, TextVectorizer
+from src.dataset import SpamDataset
+from src.vectorizer import TextVectorizer
 from src.training import create_model, split_training_data, train_model
 from src.evaluation import evaluate_model
 
@@ -25,7 +26,7 @@ class EmailClassifier:
 
     This class separates the classifier logic from the command-line interface.
     """
-
+    # Constructor
     def __init__(
             self,
             dataset_path: str = "data/spam.csv",
@@ -45,10 +46,12 @@ class EmailClassifier:
         """
         self.dataset = SpamDataset.load(dataset_path)
         
+        # normalizes the labels in the dataset, make as string, cleans spaces and lowercase each labels
         self.dataset["label"] = (
             self.dataset["label"].astype(str).str.strip().str.lower()
         )
 
+        # Making sure the threshold is set between 0 and 1
         if not 0.0 <= spam_threshold <= 1.0:
             raise ValueError("Spam threshold must be between 0.0 and 1.0.")
 
@@ -56,10 +59,13 @@ class EmailClassifier:
         self.vectorizer = TextVectorizer() # Using custom class
         self.model: LogisticRegression | MultinomialNB | None = None
         
-        self.X_train = None
-        self.X_test = None
-        self.y_train = None
-        self.y_test = None
+        # The training messages, converted into TF-IDF numerical features
+        self.X_train = None # 80% of messages converted into numbers, used to train
+        self.X_test = None # 20% of messages converted into numbers, used to test
+        
+        # The training labels, like ham or spam
+        self.y_train = None # correct labels for those 80% messages
+        self.y_test = None # correct labels for those 20% messages
 
         self.trained = False
 
@@ -78,7 +84,6 @@ class EmailClassifier:
     def train(
             self, 
             model_type: str = "logistic",
-            # model_type: str = "naive_bayes", 
             test_size: float = 0.2, 
             random_state: int = 42
     ) -> None:
@@ -87,48 +92,80 @@ class EmailClassifier:
         if self.dataset.empty:
             raise ValueError("Cannot train classifier on an empty dataset.")
 
-        # Convert raw email text into TF-IDF numerical features using the TextVectorizer
-        features = self.vectorizer.fit_transform(self.dataset["message"].astype(str))
-        labels = self.dataset["label"].astype(str)
-
-        self.X_train, self.X_test, self.y_train, self.y_test = split_training_data(
-            features,
-            labels,
+        train_dataset, test_dataset, y_train, y_test = split_training_data(
+            self.dataset,
+            self.dataset["label"],
             test_size=test_size,
             random_state=random_state,
         )
+
+        ''' So the model pipeline doesn't see the test data before evaluation '''
+        # learns vocabulary only from the 80% training messages
+        self.X_train = self.vectorizer.fit_transform(
+            # Return matrix of TF-IDF values
+            train_dataset["message"].astype(str)
+        )
+        
+        # converts the 20% test messages using the training vocabulary, 
+        # but does not learn from them
+        self.X_test = self.vectorizer.transform(
+            test_dataset["message"].astype(str)
+        )
+
+        # Assigning the splitted data "label" to coresponding train or test purpose
+        self.y_train = y_train.astype(str)
+        self.y_test = y_test.astype(str)
 
         self.model = create_model(model_type)
         train_model(self.model, self.X_train, self.y_train)
         
         self.trained = True
 
-    def predict(self, text: str) -> tuple[str, float]:
-        """Predict the label and confidence for score for one email message."""
-        
+    def predict(self, input: str) -> tuple[str, float]:
+        """
+        Predict the label and confidence for score for one email message
+
+        Args:
+            input: takes one email/message as input in str
+
+        Return:
+            tuple[str, float] example: ("spam", 0.92) or ("ham", 0.87)
+            first value is the predicted label, the second is the confidence
+        """
+        # Checks whether the classifier has already been trained
         if not self.trained or self.model is None:
             raise ValueError("The classifier must be trained before making predictions.")
 
-        text = str(text).strip()
+        # Converts the input to a string and removes extra spaces at the beginning and end
+        input = str(input).strip()
         
-        if not text:
+        # Checks if the message is empty after stripping spaces
+        if not input:
             raise ValueError("Input message must not be empty.")
 
-        features = self.vectorizer.transform([text])
-        probabilities = self.model.predict_proba(features)[0]
+        # Converts the text message into numbers using the trained vectorizer
+        # uses square brackets because the vectorizer expects a list of messages, even if there is only one message
+        features = self.vectorizer.transform([input])
+        # Asks the trained model for the probability of each class
+        # For example, the model might return something like: [0.15, 0.85] -> 15% ham, 85% spam
+        probabilities = self.model.predict_proba(features)[0] # [0] gets the result for the first and only message
         
+        # Gets the class labels learned by the model
+        # important because the probabilities match this order
         classes = list(self.model.classes_)
+        # Finds where "spam" is located in the class list without assuming the order
         spam_index = classes.index("spam")
+        # Gets the probability for the "spam" class
         spam_probability = float(probabilities[spam_index])
 
-        # Debug
-        # print(f"Spam probability: {spam_probability:.4f}")
-
+        # Checks whether the spam probability is high enough to classify the message as spam
         if spam_probability >= self.spam_threshold:
             predicted_label = "spam"
+            # The confidence is the spam probability
             confidence = spam_probability
         else:
             predicted_label = "ham"
+            # Calculates confidence for ham
             confidence = 1.0 - spam_probability
         
         return predicted_label, confidence
