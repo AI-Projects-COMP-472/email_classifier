@@ -111,8 +111,8 @@ class EmailClassifier:
         )
 
         # Assigning the splitted data "label" to coresponding train or test purpose
-        self.y_train = y_train["label"].astype(str)
-        self.y_test = y_test["label"].astype(str)
+        self.y_train = y_train.astype(str)
+        self.y_test = y_test.astype(str)
 
         self.model = create_model(model_type)
         train_model(self.model, self.X_train, self.y_train)
