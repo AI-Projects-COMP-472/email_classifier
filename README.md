@@ -68,7 +68,6 @@ python -m src.main
 #To-Do Later
 
 ## How it works
-#To-Do Later
 ### Feature extraction (TF-IDF)
 The email text is converted into numerical values using TF-IDF. This gives more importance to words that are useful for classification while reducing the impact of very common words.
 
