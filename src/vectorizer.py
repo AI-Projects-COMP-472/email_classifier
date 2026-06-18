@@ -1,5 +1,7 @@
 """
     Converting text to TF-IDF (term frequency-inverse document frequency) numerical features
+    - TF (term frequency): How much the word appears in this specific message
+    - IDF (inverse document frequency): How rare or common the word is across all training messages
     - gives higher importance to words that are useful for distinguishing one message from others
     - wrap scikit-learn’s TfidfVectorizer turning email text into machine-learning-ready numbers
 """

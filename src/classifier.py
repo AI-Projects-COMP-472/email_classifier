@@ -26,7 +26,7 @@ class EmailClassifier:
 
     This class separates the classifier logic from the command-line interface.
     """
-
+    # Constructor
     def __init__(
             self,
             dataset_path: str = "data/spam.csv",
@@ -46,10 +46,12 @@ class EmailClassifier:
         """
         self.dataset = SpamDataset.load(dataset_path)
         
+        # normalizes the labels in the dataset, make as string, cleans spaces and lowercase each labels
         self.dataset["label"] = (
             self.dataset["label"].astype(str).str.strip().str.lower()
         )
 
+        # Making sure the threshold is set between 0 and 1
         if not 0.0 <= spam_threshold <= 1.0:
             raise ValueError("Spam threshold must be between 0.0 and 1.0.")
 
@@ -119,32 +121,51 @@ class EmailClassifier:
         
         self.trained = True
 
-    def predict(self, text: str) -> tuple[str, float]:
-        """Predict the label and confidence for score for one email message."""
-        
+    def predict(self, input: str) -> tuple[str, float]:
+        """
+        Predict the label and confidence for score for one email message
+
+        Args:
+            input: takes one email/message as input in str
+
+        Return:
+            tuple[str, float] example: ("spam", 0.92) or ("ham", 0.87)
+            first value is the predicted label, the second is the confidence
+        """
+        # Checks whether the classifier has already been trained
         if not self.trained or self.model is None:
             raise ValueError("The classifier must be trained before making predictions.")
 
-        text = str(text).strip()
+        # Converts the input to a string and removes extra spaces at the beginning and end
+        input = str(input).strip()
         
-        if not text:
+        # Checks if the message is empty after stripping spaces
+        if not input:
             raise ValueError("Input message must not be empty.")
 
-        features = self.vectorizer.transform([text])
-        probabilities = self.model.predict_proba(features)[0]
+        # Converts the text message into numbers using the trained vectorizer
+        # uses square brackets because the vectorizer expects a list of messages, even if there is only one message
+        features = self.vectorizer.transform([input])
+        # Asks the trained model for the probability of each class
+        # For example, the model might return something like: [0.15, 0.85] -> 15% ham, 85% spam
+        probabilities = self.model.predict_proba(features)[0] # [0] gets the result for the first and only message
         
+        # Gets the class labels learned by the model
+        # important because the probabilities match this order
         classes = list(self.model.classes_)
+        # Finds where "spam" is located in the class list without assuming the order
         spam_index = classes.index("spam")
+        # Gets the probability for the "spam" class
         spam_probability = float(probabilities[spam_index])
 
-        # Debug
-        # print(f"Spam probability: {spam_probability:.4f}")
-
+        # Checks whether the spam probability is high enough to classify the message as spam
         if spam_probability >= self.spam_threshold:
             predicted_label = "spam"
+            # The confidence is the spam probability
             confidence = spam_probability
         else:
             predicted_label = "ham"
+            # Calculates confidence for ham
             confidence = 1.0 - spam_probability
         
         return predicted_label, confidence
