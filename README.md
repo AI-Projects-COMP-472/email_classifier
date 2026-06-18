@@ -68,42 +68,82 @@ python -m src.main
 #To-Do Later
 
 ## How it works
-
 #To-Do Later
+### Feature extraction (TF-IDF)
+
+### Model Training
+
+### Model Evaluation
+
+### Confidence Score
 
 ## Optional GUI
+The project also includes a simple Tkinter GUI for demo purposes. It uses the same classes as the command-line version.
 
-#To-Edit Later
-
-### Windows
-
+Run it from the project folder:
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-python -m gui.app
-```
-
-### macOS/ Linux
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
 python -m gui.app
 ```
 
 ## Example Run
 
-#To-Do Later
+```text
+==================================================
+  Email Classifier - COMP 472
+==================================================
+
+Choose a model:
+  1. Logistic Regression
+  2. Naive Bayes
+Model [1]: 1
+
+--- Dataset Information ---
+Total records: 5572
+Label distribution: {'ham': 4825, 'spam': 747}
+Average message length: 80 characters
+Model: logistic
+Spam threshold: 0.35
+
+Training Model logistic...
+
+--- Evaluation ---
+Accuracy: 97.85%
+Confusion matrix:
+  Classes: ['ham', 'spam']
+  ham: [965, 1]
+  spam: [23, 126]
+------------------------
+
+Enter an email message to classify, or type 'quit' to exit.
+Message: Congratulations! You won $5000.
+Prediction: SPAM | Confidence: 45.38%
+
+Message: Please submit your project by tomorrow.
+Prediction: HAM | Confidence: 94.71%
+
+Message: quit
+Goodbye!
+```
 
 ## Test Input
-
-#To-Do Later
+Try these:
+```text
+Win a free vacation now!
+Your appointment is scheduled for tomorrow.
+Congratulations! You have won a free iPhone.
+Please submit your assignment before Friday.
+Claim your prize now!
+Meeting moved to 2 PM tomorrow.
+Win a FREE iPhone today!
+Reservation at 6pm next Saturday
+Congratulations! Claim your tickets now!
+```
 
 ## Running the basic test
-
-#To-Do Later
+```bash
+python -m pytest
+```
+The included test checks every modules and features of the program. They uses predifined valid CSV created on the spot so they don't load the whole spam.csv dataset every time.
 
 ## Screenshots
 
