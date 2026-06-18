@@ -13,8 +13,8 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
 
     Args:
         model: A trained scikit-learn classifier with predict_proba support.
-        X_test: Feature matrix for the test set.
-        y_test: True labels for the test set.
+        X_test: test messages converted into a matrix of numerical TF-IDF values
+        y_test: correct labels for the test messages, like ham or spam
         spam_threshold: Probability threshold above which a message is labeled
             as spam.
 
@@ -23,22 +23,33 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
         formatted classification report.
     """
 
+    # converts label names into a normal Python list
     classes = list(model.classes_)
+    # finds the position of "spam" inside the class list
     spam_index = classes.index("spam")
+    # asks the model to predict probabilities for every test message
+    # Return a matrix of prob for each label ex: ["ham", "spam"] -> [0.95, 0.05]
     probabilities = model.predict_proba(X_test)
 
+    # For each row of probabilities, checks the spam probability
     predictions = [
+        # If the spam probability is greater than or equal to the threshold, predict "spam"
         "spam" if row[spam_index] >= spam_threshold else "ham"
         for row in probabilities
     ]
 
+    # compares the real labels y_test with the predicted labels
     accuracy = accuracy_score(y_test, predictions)
+    
+    # creates a confusion matrix
     confusion = confusion_matrix(y_test, predictions, labels=classes)
-    report = classification_report(y_test, predictions, zero_division=0)
+    
+    # # creates a detailed text report with precision, recall, and F1-score
+    # report = classification_report(y_test, predictions, zero_division=0)
 
     return {
         "accuracy": accuracy,
         "confusion_matrix": confusion.tolist(),
         "classes": classes,
-        "report": report,
+        # "report": report,
     }
