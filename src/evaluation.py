@@ -1,8 +1,7 @@
 """Evaluation utilities for the email classifier.
 
 This module provides a helper function to evaluate a trained classification
-model on a holdout test set, producing accuracy, confusion matrix, and a
-text classification report.
+model on a holdout test set, producing accuracy and a confusion matrix
 """
 
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
@@ -19,8 +18,7 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
             as spam.
 
     Returns:
-        A dictionary containing accuracy, confusion matrix, classes, and a
-        formatted classification report.
+        A dictionary containing accuracy, confusion matrix, classes
     """
 
     # converts label names into a normal Python list
@@ -44,12 +42,8 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
     # creates a confusion matrix
     confusion = confusion_matrix(y_test, predictions, labels=classes)
     
-    # # creates a detailed text report with precision, recall, and F1-score
-    # report = classification_report(y_test, predictions, zero_division=0)
-
     return {
         "accuracy": accuracy,
         "confusion_matrix": confusion.tolist(),
         "classes": classes,
-        # "report": report,
     }

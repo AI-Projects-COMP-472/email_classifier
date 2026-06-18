@@ -89,7 +89,6 @@ class EmailClassifier:
         if self.dataset.empty:
             raise ValueError("Cannot train classifier on an empty dataset.")
 
-        # _ empty values because 
         train_dataset, test_dataset, y_train, y_test = split_training_data(
             self.dataset,
             self.dataset["label"],

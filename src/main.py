@@ -59,14 +59,12 @@ def print_evaluation(evaluation: dict) -> None:
     """
     classes = evaluation["classes"]
     confusion = evaluation["confusion_matrix"]
-    print("--- Evaluation ---")
+    print("\n--- Evaluation ---")
     print(f"Accuracy: {evaluation['accuracy']:.2%}")
     print("Confusion matrix:")
     print(f"  Classes: {classes}")
     for label, row in zip(classes, confusion):
         print(f"  {label}: {row}")
-    print("\nClassification report:")
-    print(evaluation["report"])
     print(f"{'---' * 8}\n")
 
 
