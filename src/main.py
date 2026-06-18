@@ -10,6 +10,7 @@ Run:
 
 from src.classifier import EmailClassifier
 from src.visualization import plot_label_distribution
+from src.evaluation import print_evaluation
 
 MODEL_THRESHOLDS = {
     "logistic": 0.35,
@@ -48,24 +49,6 @@ def choose_model() -> str:
             return choices[user_choice]
 
         print("Invalid choice. Enter 1 for logistic or 2 for naive_bayes.")
-
-
-def print_evaluation(evaluation: dict) -> None:
-    """Print evaluation metrics for the trained classifier.
-
-    Args:
-        evaluation: A dictionary returned by EmailClassifier.evaluate(),
-            containing accuracy, confusion matrix, labels, and report text.
-    """
-    classes = evaluation["classes"]
-    confusion = evaluation["confusion_matrix"]
-    print("\n--- Evaluation ---")
-    print(f"Accuracy: {evaluation['accuracy']:.2%}")
-    print("Confusion matrix:")
-    print(f"  Classes: {classes}")
-    for label, row in zip(classes, confusion):
-        print(f"  {label}: {row}")
-    print(f"{'---' * 8}\n")
 
 
 def run_prediction_loop(classifier: EmailClassifier) -> None:

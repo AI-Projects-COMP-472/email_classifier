@@ -47,3 +47,20 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
         "confusion_matrix": confusion.tolist(),
         "classes": classes,
     }
+
+def print_evaluation(evaluation: dict) -> None:
+    """Print evaluation metrics for the trained classifier.
+
+    Args:
+        evaluation: A dictionary returned by EmailClassifier.evaluate(),
+            containing accuracy, confusion matrix and labels
+    """
+    classes = evaluation["classes"]
+    confusion = evaluation["confusion_matrix"]
+    print("\n--- Evaluation ---")
+    print(f"Accuracy: {evaluation['accuracy']:.2%}")
+    print("Confusion matrix:")
+    print(f"  Classes: {classes}")
+    for label, row in zip(classes, confusion):
+        print(f"  {label}: {row}")
+    print(f"{'---' * 8}\n")
