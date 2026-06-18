@@ -51,6 +51,7 @@ def split_training_data(features, labels, test_size=0.2, random_state=42):
         test_size=test_size,
         stratify=labels,
         random_state=random_state,
+        shuffle=True,
     )
 
 
