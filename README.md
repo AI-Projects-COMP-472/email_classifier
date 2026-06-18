@@ -22,7 +22,8 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 │   ├── __init__.py
 │   ├── main.py
 │   ├── classifier.py
-│   ├── conversion.py
+│   ├── dataset.py
+│   ├── vectorizer.py
 │   ├── training.py
 │   ├── evaluation.py
 │   └── visualization.py
@@ -32,7 +33,8 @@ This project is an AI-powered email filtering system for COMP 472. The program w
 ├── tests/
 │   ├── __init__.py
 │   ├── test_classifier.py
-│   ├── test_conversion.py
+│   ├── test_dataset.py
+│   ├── test_vectorizer.py
 │   ├── test_training.py
 │   ├── test_evaluation.py
 │   └── test_visualization.py
