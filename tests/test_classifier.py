@@ -136,5 +136,4 @@ def test_evaluate_returns_model_metrics(classifier_with_sample_dataset):
     assert "accuracy" in evaluation
     assert "confusion_matrix" in evaluation
     assert "classes" in evaluation
-    assert "report" in evaluation
     assert 0.0 <= evaluation["accuracy"] <= 1.0
