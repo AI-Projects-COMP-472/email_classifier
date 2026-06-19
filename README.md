@@ -53,13 +53,14 @@ pip install -r requirements.txt
 python -m src.main
 ```
 ## Architecture
-#To-Do Later
+Both the CLI (`src/main.py`) and GUI (`gui/app.py`) use the same `EmailClassifier` coordinator in `src/classifier.py`. The classifier loads `data/spam.csv` through `SpamDataset`, converts messages to TF-IDF features with `TextVectorizer`, trains either Logistic Regression or Naive Bayes, then supports prediction, evaluation, and visualization.
+
+![Architecture diagram](docs/screenshots/architecture-diagram.png)
 
 ## How it works 
 #To-Do Later
 
 ## Optional GUI
-#To-Edit Later
 ### Windows 
 ```bash
 python -m venv .venv
@@ -85,5 +86,16 @@ python -m gui.app
 #To-Do Later
 
 ## Screenshots
-#To-Do Later
+
+#### Example 1: Spam
+![sc1 spam classification](docs/screenshots/sc1-spam.png)
+
+#### Example 2: Spam
+![sc2 spam classification](docs/screenshots/sc2-spam.png)
+
+#### Example 3: Ham 
+![sc3 ham classification](docs/screenshots/sc3-ham.png)
+
+#### Example 4: Ham 
+![sc4 ham classification](docs/screenshots/sc4-ham.png)
 
