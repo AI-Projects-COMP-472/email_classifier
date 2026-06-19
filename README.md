@@ -66,9 +66,6 @@ python -m src.main
 ```
 
 ## Architecture
-
-Both the CLI (`src/main.py`) and GUI (`gui/app.py`) use the same `EmailClassifier` coordinator in `src/classifier.py`. The classifier loads `data/spam.csv` through `SpamDataset` in `src/dataset.py`, converts messages to TF-IDF features with `TextVectorizer` in `src/vectorizer.py`, trains either Logistic Regression or Naive Bayes, then supports prediction, evaluation, and visualization.
-
 ![Architecture diagram](docs/screenshots/architecture-diagram.png)
 
 ## How it works
@@ -154,14 +151,14 @@ The included test checks every modules and features of the program. They uses pr
 
 ## Screenshots
 
-#### Example 1: Spam
-![sc1 spam classification](docs/screenshots/sc1-spam.png)
+#### Example 1: Spam - Logistic Model
+![sc1 spam classification](docs/screenshots/spam-logistic.png)
 
-#### Example 2: Spam
-![sc2 spam classification](docs/screenshots/sc2-spam.png)
+#### Example 2: Spam - Naive Bayes Model
+![sc2 spam classification](docs/screenshots/spam-bayes.png)
 
-#### Example 3: Ham 
-![sc3 ham classification](docs/screenshots/sc3-ham.png)
+#### Example 3: Ham - Logistic Model
+![sc3 ham classification](docs/screenshots/ham-logistic.png)
 
-#### Example 4: Ham 
-![sc4 ham classification](docs/screenshots/sc4-ham.png)
+#### Example 4: Ham - Naive Bayes Model
+![sc4 ham classification](docs/screenshots/ham-bayes.png)
