@@ -151,6 +151,16 @@ The included test checks every modules and features of the program. They uses pr
 
 ## Screenshots
 
+### CLI
+
+#### Training, evaluation, and label distribution chart
+![CLI training and chart](docs/screenshots/cli-diagram.png)
+
+#### Interactive classification
+![CLI classification results](docs/screenshots/cli-result.png)
+
+### GUI
+
 #### Example 1: Spam - Logistic Model
 ![sc1 spam classification](docs/screenshots/spam-logistic.png)
 
