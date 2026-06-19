@@ -66,8 +66,7 @@ python -m src.main
 ```
 
 ## Architecture
-
-#To-Do Later
+![Architecture diagram](docs/screenshots/architecture-diagram.png)
 
 ## How it works
 ### Feature extraction (TF-IDF)
@@ -152,4 +151,14 @@ The included test checks every modules and features of the program. They uses pr
 
 ## Screenshots
 
-#To-Do Later
+#### Example 1: Spam - Logistic Model
+![sc1 spam classification](docs/screenshots/spam-logistic.png)
+
+#### Example 2: Spam - Naive Bayes Model
+![sc2 spam classification](docs/screenshots/spam-bayes.png)
+
+#### Example 3: Ham - Logistic Model
+![sc3 ham classification](docs/screenshots/ham-logistic.png)
+
+#### Example 4: Ham - Naive Bayes Model
+![sc4 ham classification](docs/screenshots/ham-bayes.png)
