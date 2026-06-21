@@ -19,10 +19,14 @@ MODEL_THRESHOLDS = {
 
 
 def choose_model() -> str:
-    """Prompt the user to select the classifier model.
+    """Prompt user to select a classifier model.
+
+    Displays available model options and loops until a valid choice is received.
+    Accepts various input formats (e.g., "1", "logistic", "lr").
+    Defaults to Logistic Regression if user presses Enter without typing.
 
     Returns:
-        A model type string of either 'logistic' or 'naive_bayes'.
+        A model type string: "logistic" or "naive_bayes"
     """
 
     choices = {
@@ -52,9 +56,14 @@ def choose_model() -> str:
 
 
 def run_prediction_loop(classifier: EmailClassifier) -> None:
-    """Run the interactive prediction loop for user-entered email text.
+    """Run an interactive prediction loop for user-entered email messages.
 
-    The loop continues until the user types 'quit', 'exit', or 'q'.
+    Continuously prompts the user to enter email text for classification.
+    Displays the predicted label and confidence score for each message.
+    Loop terminates when user types 'quit', 'exit', or 'q'.
+
+    Args:
+        classifier: A trained EmailClassifier instance.
     """
     print("Enter an email message to classify, or type 'quit' to exit.")
     while True:
@@ -74,7 +83,18 @@ def run_prediction_loop(classifier: EmailClassifier) -> None:
 
 
 def main() -> None:
-    """Main function to run the email classifier."""
+    """Main entry point for the email classifier command-line interface.
+
+    Orchestrates the complete workflow:
+    1. Prompt user to select a model
+    2. Load and display dataset information
+    3. Train the selected classifier
+    4. Display evaluation metrics
+    5. Generate visualization of label distribution
+    6. Run interactive prediction loop
+
+    Handles errors gracefully with informative messages.
+    """
     print("=" * 50)
     print("  Email Classifier - COMP 472")
     print("=" * 50)
@@ -88,10 +108,11 @@ def main() -> None:
             spam_threshold=spam_threshold,
         )
     except FileNotFoundError as e:
-        print(f"Error: {e}")
+        print(f"\n❌ Error: {e}")
+        print("   Make sure 'data/spam.csv' exists in the project folder.")
         return
     except ValueError as e:
-        print(f"Error: {e}")
+        print(f"\n❌ Data Error: {e}")
         return
 
     print(f"\n--- Dataset Information ---")
@@ -100,12 +121,12 @@ def main() -> None:
     print(f"Spam threshold: {spam_threshold:.2f}")
 
     try:
-        print(f"\nTraining Model {model_type}...")
-
+        print(f"\nTraining {model_type} model...")
         classifier.train(model_type=model_type)
+        print("✓ Training complete!")
 
     except ValueError as error:
-        print(f"Error while training: {error}")
+        print(f"\n❌ Training Error: {error}")
         return
 
     evaluation = classifier.evaluate()

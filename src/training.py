@@ -10,17 +10,24 @@ from sklearn.naive_bayes import MultinomialNB
 
 
 def create_model(model_type: str):
-    """Create a supported machine learning model.
+    """Create a machine learning classifier of the specified type.
+
+    Creates an untrained model instance that can be fitted to training data.
 
     Args:
-        model_type: Name of the model to create, either 'logistic' or
-            'naive_bayes'.
+        model_type: Name of the model to create. Supported values:
+                    - "logistic" or "lr" for Logistic Regression
+                    - "naive_bayes" or "nb" for Multinomial Naive Bayes
 
     Returns:
         An untrained scikit-learn classifier instance.
 
     Raises:
-        ValueError: If the requested model type is not supported.
+        ValueError: If model_type is not supported.
+
+    Example:
+        >>> model = create_model("logistic")
+        >>> model = create_model("naive_bayes")
     """
 
     if model_type.lower() in {"logistic", "lr"}:
@@ -35,40 +42,40 @@ def create_model(model_type: str):
 def split_training_data(features, labels, test_size=0.2, random_state=42):
     """Split feature and label data into training and testing sets.
 
+    This function uses stratified splitting to ensure that both the training and test
+    sets have roughly the same proportion of spam and ham messages as the original dataset.
+    This is important for unbalanced datasets.
+
     Args:
-        features: Feature matrix to split.
-        labels: Target label array or Series.
-        test_size: keeps 20% of the rows for testing, so the remaining 80% becomes self.train_dataset
-        random_state: makes the split repeatable.
+        features: Feature matrix to split (e.g., TF-IDF vectors).
+        labels: Target label array or Series (e.g., 'ham' or 'spam').
+        test_size: Fraction of data to use for testing (default 0.2 = 20% test, 80% train).
+        random_state: Random seed for reproducibility (default 42).
     
     Returns:
-        A tuple of (X_train, X_test, y_train, y_test).
+        A tuple of (features_train, features_test, labels_train, labels_test).
     """
 
     return train_test_split(
         features,
         labels,
         test_size=test_size,
-        
-        # keeps roughly the same spam/ham ratio in both datasets. 
-        # So if the full dataset is mostly ham, the training and testing sets will also be mostly ham.
-        stratify=labels,
-        
-        # Every time the program runs, it gets the same 80/20 split
-        random_state=random_state,
-        
-        # mixes the rows before splitting. In case the CSV is ordered in some pattern.
-        shuffle=True,
+        stratify=labels,  # Keeps the same spam/ham ratio in both sets
+        random_state=random_state,  # Same split every time for reproducibility
+        shuffle=True,  # Mix rows before splitting (in case CSV is ordered by label)
     )
 
 
 def train_model(model, X_train, y_train):
-    """Train a model using the provided training data.
+    """Train a scikit-learn classifier on the provided training data.
+
+    Fits the model to learn patterns from the training features and labels.
 
     Args:
-        model: A scikit-learn estimator with a fit method.
-        X_train: Training feature matrix.
-        y_train: Training labels.
+        model: A scikit-learn estimator with a fit() method
+               (e.g., LogisticRegression, MultinomialNB).
+        X_train: Training feature matrix (typically TF-IDF vectors).
+        y_train: Training labels (array of class names).
 
     Returns:
         The trained model instance.

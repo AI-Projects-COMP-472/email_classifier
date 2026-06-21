@@ -21,10 +21,21 @@ from src.training import create_model, split_training_data, train_model
 from src.evaluation import evaluate_model
 
 class EmailClassifier:
-    """
-    Email spam classifier coordinator.
+    """Email spam classifier coordinator.
 
-    This class separates the classifier logic from the command-line interface.
+    This class connects all the machine learning pipeline components:
+    - Dataset loading and management
+    - Text vectorization (TF-IDF feature extraction)
+    - Model training and selection
+    - Prediction with confidence scores
+    - Performance evaluation
+
+    Example:
+        >>> classifier = EmailClassifier(dataset_path="data/spam.csv")
+        >>> classifier.train(model_type="logistic")
+        >>> label, confidence = classifier.predict("Free money now!")
+        >>> print(f"{label}: {confidence:.2%}")
+        spam: 92.34%
     """
     # Constructor
     def __init__(
@@ -32,45 +43,50 @@ class EmailClassifier:
             dataset_path: str = "data/spam.csv",
             spam_threshold: float = 0.40
     ) -> None:
-        """
-        Initialize the email classifier.
+        """Initialize the email classifier.
+
+        Loads a CSV dataset, initializes a vectorizer and prepares for model training.
 
         Args:
-            dataset_path: Path to the CSV dataset file.
-            spam_threshold: Minimum spam probability needed to classify a
-                message as spam. Lower values catch spam more aggressively.
+            dataset_path: Path to the CSV dataset file (default: "data/spam.csv").
+                         Must have columns: label, message
+            spam_threshold: Probability threshold for classifying as spam (default: 0.40).
+                           Range: 0.0 to 1.0. Lower values catch more spam but may increase false positives.
 
         Raises:
             FileNotFoundError: If the dataset file does not exist.
-            ValueError: If the dataset is invalid.
+            ValueError: If the dataset is invalid or spam_threshold is out of range.
         """
         self.dataset = SpamDataset.load(dataset_path)
         
-        # normalizes the labels in the dataset, make as string, cleans spaces and lowercase each labels
+        # Normalize labels: convert to string, strip whitespace, convert to lowercase
         self.dataset["label"] = (
             self.dataset["label"].astype(str).str.strip().str.lower()
         )
 
-        # Making sure the threshold is set between 0 and 1
+        # Validate spam_threshold is in valid probability range
         if not 0.0 <= spam_threshold <= 1.0:
             raise ValueError("Spam threshold must be between 0.0 and 1.0.")
 
         self.spam_threshold = spam_threshold
-        self.vectorizer = TextVectorizer() # Using custom class
+        self.vectorizer = TextVectorizer()  # TF-IDF vectorizer
         self.model: LogisticRegression | MultinomialNB | None = None
         
-        # The training messages, converted into TF-IDF numerical features
-        self.X_train = None # 80% of messages converted into numbers, used to train
-        self.X_test = None # 20% of messages converted into numbers, used to test
-        
-        # The training labels, like ham or spam
-        self.y_train = None # correct labels for those 80% messages
-        self.y_test = None # correct labels for those 20% messages
+        # Training/testing data splits - populated during train()
+        self.X_train = None  # TF-IDF feature matrix for training set (80%)
+        self.X_test = None   # TF-IDF feature matrix for test set (20%)
+        self.y_train = None  # Labels for training set
+        self.y_test = None   # Labels for test set
 
         self.trained = False
 
     def get_dataset_info(self) -> str:
-        """Return a printable summary of the loaded dataset."""
+        """Return a human-readable summary of the loaded dataset.
+
+        Returns:
+            A formatted string containing total records, label distribution,
+            and average message length.
+        """
 
         label_dist = self.dataset["label"].value_counts().to_dict()
         avg_len = self.dataset["message"].str.len().mean()
@@ -87,11 +103,25 @@ class EmailClassifier:
             test_size: float = 0.2, 
             random_state: int = 42
     ) -> None:
-        """Train the classifier using the loaded dataset."""
+        """Train the classifier on the loaded dataset.
+
+        Splits the dataset into training (80%) and test (20%) sets, learns the
+        TF-IDF vocabulary from training messages, and trains the selected model.
+
+        Args:
+            model_type: Type of model to train ("logistic" or "naive_bayes").
+                       Default: "logistic"
+            test_size: Fraction of data to use for testing (default: 0.2 = 20%).
+            random_state: Random seed for reproducibility (default: 42).
+
+        Raises:
+            ValueError: If dataset is empty or model_type is unsupported.
+        """
         
         if self.dataset.empty:
             raise ValueError("Cannot train classifier on an empty dataset.")
 
+        # Split dataset into training and test sets
         train_dataset, test_dataset, y_train, y_test = split_training_data(
             self.dataset,
             self.dataset["label"],
@@ -99,79 +129,95 @@ class EmailClassifier:
             random_state=random_state,
         )
 
-        ''' So the model pipeline doesn't see the test data before evaluation '''
-        # learns vocabulary only from the 80% training messages
+        # Learn TF-IDF vocabulary from training messages only (avoid data leakage)
         self.X_train = self.vectorizer.fit_transform(
-            # Return matrix of TF-IDF values
             train_dataset["message"].astype(str)
         )
         
-        # converts the 20% test messages using the training vocabulary, 
-        # but does not learn from them
+        # Transform test messages using the training vocabulary (no learning)
         self.X_test = self.vectorizer.transform(
             test_dataset["message"].astype(str)
         )
 
-        # Assigning the splitted data "label" to coresponding train or test purpose
+        # Store labels as strings
         self.y_train = y_train.astype(str)
         self.y_test = y_test.astype(str)
 
+        # Create and train the selected model
         self.model = create_model(model_type)
         train_model(self.model, self.X_train, self.y_train)
         
         self.trained = True
 
     def predict(self, input: str) -> tuple[str, float]:
-        """
-        Predict the label and confidence for score for one email message
+        """Predict the label and confidence score for one email message.
 
         Args:
-            input: takes one email/message as input in str
+            input: Email message text to classify.
 
-        Return:
-            tuple[str, float] example: ("spam", 0.92) or ("ham", 0.87)
-            first value is the predicted label, the second is the confidence
+        Returns:
+            A tuple of (predicted_label, confidence) where:
+            - predicted_label: "spam" or "ham"
+            - confidence: float between 0.0 and 1.0 (higher = more certain)
+
+        Raises:
+            ValueError: If classifier is not trained or input is empty.
+
+        Example:
+            >>> classifier.train(model_type="logistic")
+            >>> label, confidence = classifier.predict("Free money!")
+            >>> print(f"{label}: {confidence:.2%}")
+            spam: 92.34%
         """
-        # Checks whether the classifier has already been trained
+        # Verify classifier has been trained
         if not self.trained or self.model is None:
             raise ValueError("The classifier must be trained before making predictions.")
 
-        # Converts the input to a string and removes extra spaces at the beginning and end
+        # Clean input: convert to string and strip whitespace
         input = str(input).strip()
         
-        # Checks if the message is empty after stripping spaces
+        # Reject empty messages
         if not input:
             raise ValueError("Input message must not be empty.")
 
-        # Converts the text message into numbers using the trained vectorizer
-        # uses square brackets because the vectorizer expects a list of messages, even if there is only one message
+        # Convert text to TF-IDF features using learned vocabulary
         features = self.vectorizer.transform([input])
-        # Asks the trained model for the probability of each class
-        # For example, the model might return something like: [0.15, 0.85] -> 15% ham, 85% spam
-        probabilities = self.model.predict_proba(features)[0] # [0] gets the result for the first and only message
+        # Get probability predictions for each class
+        probabilities = self.model.predict_proba(features)[0]
         
-        # Gets the class labels learned by the model
-        # important because the probabilities match this order
+        # Get class labels from the trained model
         classes = list(self.model.classes_)
-        # Finds where "spam" is located in the class list without assuming the order
+        # Find the index of "spam" class
         spam_index = classes.index("spam")
-        # Gets the probability for the "spam" class
+        # Extract spam probability
         spam_probability = float(probabilities[spam_index])
 
-        # Checks whether the spam probability is high enough to classify the message as spam
+        # Classify based on threshold
         if spam_probability >= self.spam_threshold:
             predicted_label = "spam"
-            # The confidence is the spam probability
             confidence = spam_probability
         else:
             predicted_label = "ham"
-            # Calculates confidence for ham
+            # Confidence for ham is 1 - spam_probability
             confidence = 1.0 - spam_probability
         
         return predicted_label, confidence
 
     def evaluate(self) -> dict[str, Any]:
-        """Evaluate the trained classifier on the holdout test set."""
+        """Evaluate the trained classifier on the holdout test set.
+
+        Computes accuracy and confusion matrix on test data using the trained model
+        and the configured spam_threshold.
+
+        Returns:
+            A dictionary with keys:
+                - 'accuracy': float between 0.0 and 1.0
+                - 'confusion_matrix': list[list[int]]
+                - 'classes': list[str] (class names)
+
+        Raises:
+            ValueError: If classifier is not trained.
+        """
         
         if not self.trained or self.model is None:
             raise ValueError("The classifier must be trained before evaluation.")

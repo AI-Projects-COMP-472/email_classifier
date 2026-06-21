@@ -8,38 +8,45 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 
 def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
-    """Evaluate a trained model using test data.
+    """Evaluate a trained classifier model on unseen test data.
+
+    This function compares the model's predictions against the true labels
+    and computes evaluation metrics like accuracy and confusion matrix.
+    The spam_threshold parameter controls the decision boundary: messages with
+    spam probability >= threshold are classified as spam, otherwise as ham.
 
     Args:
-        model: A trained scikit-learn classifier with predict_proba support.
-        X_test: test messages converted into a matrix of numerical TF-IDF values
-        y_test: correct labels for the test messages, like ham or spam
-        spam_threshold: Probability threshold above which a message is labeled
-            as spam.
+        model: A trained scikit-learn classifier with predict_proba() support
+               (e.g., LogisticRegression, MultinomialNB).
+        X_test: Test feature matrix (TF-IDF vectors from vectorizer.transform()).
+        y_test: True labels for test set (array of 'ham' or 'spam' strings).
+        spam_threshold: Probability threshold for classifying as spam.
+                       Default is 0.50 (neutral). Lower values are more aggressive.
 
     Returns:
-        A dictionary containing accuracy, confusion matrix, classes
+        A dictionary with keys:
+            - 'accuracy': float between 0 and 1
+            - 'confusion_matrix': list[list[int]] (rows=true labels, cols=predicted)
+            - 'classes': list[str] (the class names, e.g., ['ham', 'spam'])
     """
 
-    # converts label names into a normal Python list of strings
+    # Convert class names to strings
     classes = [str(label) for label in model.classes_]
-    # finds the position of "spam" inside the class list
+    # Find the index of the "spam" class
     spam_index = classes.index("spam")
-    # asks the model to predict probabilities for every test message
-    # Return a matrix of prob for each label ex: ["ham", "spam"] -> [0.95, 0.05]
+    # Get probability predictions for each test message
     probabilities = model.predict_proba(X_test)
 
-    # For each row of probabilities, checks the spam probability
+    # Make predictions using the threshold
     predictions = [
-        # If the spam probability is greater than or equal to the threshold, predict "spam"
         "spam" if row[spam_index] >= spam_threshold else "ham"
         for row in probabilities
     ]
 
-    # compares the real labels y_test with the predicted labels
+    # Calculate accuracy by comparing predictions to true labels
     accuracy = accuracy_score(y_test, predictions)
     
-    # creates a confusion matrix
+    # Create confusion matrix showing true vs predicted labels
     confusion = confusion_matrix(y_test, predictions, labels=classes)
     
     return {
@@ -49,11 +56,26 @@ def evaluate_model(model, X_test, y_test, spam_threshold: float = 0.50):
     }
 
 def print_evaluation(evaluation: dict) -> None:
-    """Print evaluation metrics for the trained classifier.
+    """Print evaluation metrics in a human-readable format.
+
+    Displays accuracy percentage and a formatted confusion matrix showing
+    how many messages were classified correctly vs incorrectly.
 
     Args:
-        evaluation: A dictionary returned by EmailClassifier.evaluate(),
-            containing accuracy, confusion matrix and labels
+        evaluation: Dictionary returned by evaluate_model() containing:
+                    - 'accuracy': accuracy score
+                    - 'confusion_matrix': confusion matrix
+                    - 'classes': class names
+
+    Example:
+        >>> evaluation = classifier.evaluate()
+        >>> print_evaluation(evaluation)
+        --- Evaluation ---
+        Accuracy: 95.32%
+        Confusion matrix:
+          Classes: ['ham', 'spam']
+          ham: [485, 12]
+          spam: [8, 356]
     """
     classes = evaluation["classes"]
     confusion = evaluation["confusion_matrix"]
